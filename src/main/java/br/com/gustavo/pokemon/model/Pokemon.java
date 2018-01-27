@@ -5,9 +5,6 @@ import lombok.Data;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by gustavo on 27/01/18.
- */
 @Data
 public class Pokemon {
 
@@ -42,9 +39,5 @@ public class Pokemon {
     private List<String> weaknesses;
 
     private Map<String, String> next_evolutions;
-
-
-
-
 
 }

@@ -2,7 +2,7 @@ package br.com.gustavo.pokemon.repository;
 
 import br.com.gustavo.pokemon.model.Pokemon;
 import br.com.gustavo.pokemon.util.CollectionManager;
-import com.mongodb.MongoClient;
+import com.mongodb.*;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
 import org.mongodb.morphia.Morphia;
@@ -17,9 +17,23 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     private Datastore datastore;
 
+    private DBCollection collection;
+
     public PokemonRepositoryImpl() {
         client = new MongoClient("localhost", 27017);
-        datastore = new Morphia().createDatastore(client, "pokemon");
+        datastore = new Morphia().createDatastore(client, "novobanco");
+        DBCollection dt = datastore.getCollection(Pokemon.class);
+
+        DB database = getDatabase();
+        collection = database.getCollection("pokemon");
+
+
+    }
+
+    public static DB getDatabase() {
+        Mongo mongo = new Mongo("localhost", 27017);
+        DB database = mongo.getDB("novobanco");
+        return database;
     }
 
     public Key<Pokemon> save(Pokemon pokemon){
@@ -42,7 +56,6 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 .set("num", pokemon.getNum())
                 .set("name", pokemon.getName())
                 .set("img", pokemon.getImg())
-                .set("type", pokemon.getType())
                 .set("height", pokemon.getHeight())
                 .set("weight", pokemon.getWeight())
                 .set("candy", pokemon.getCandy())
@@ -50,10 +63,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                 .set("egg", pokemon.getEgg())
                 .set("spawn_chance", pokemon.getSpawn_chance())
                 .set("avg_spawns", pokemon.getAvg_spawns())
-                .set("spawn_time", pokemon.getSpawn_time())
-                .set("multiplyers", pokemon.getMultiplyers())
-                .set("weaknesses", pokemon.getNum())
-                .set("next_evolutions", pokemon.getNum());
+                .set("spawn_time", pokemon.getSpawn_time());
         datastore.update(query, op);
 
         return search(pokemon.getNum());
@@ -62,6 +72,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     @Override
     public List<Pokemon> list() {
+        DBCursor cursor = collection.find();
+        cursor.toArray();
+        while(cursor.hasNext()) {
+            System.out.println("Record - " + cursor.next());
+        }
+
         return datastore.find(Pokemon.class).asList();
     }
 
