@@ -1,6 +1,7 @@
 package br.com.gustavo.pokemon.repository;
 
 import br.com.gustavo.pokemon.model.Pokemon;
+import br.com.gustavo.pokemon.util.CollectionManager;
 import com.mongodb.MongoClient;
 import org.mongodb.morphia.Datastore;
 import org.mongodb.morphia.Key;
@@ -71,7 +72,8 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     @Override
     public void importData(String pathFile) {
-
+        CollectionManager.cleanAndFill(client.getDB("database"), pathFile, "pokemon");
+        datastore.ensureIndexes(Pokemon.class);
     }
 
 }

@@ -12,6 +12,8 @@ import static spark.Spark.*;
 
 public class Api {
 
+    public static final String PATH_FILE_JSON = "/home/gustavo/Downloads/pokedex.json";
+
     public static final String ROUTE_POKEMON = "/pokemon";
     public static final String CONTENT_TYPE = "application/json";
 
@@ -20,7 +22,11 @@ public class Api {
 
     public static void main(String[] args) {
 
-
+//        try {
+//            pokemonService.importData(PATH_FILE_JSON);
+//        } catch (Exception e) {
+//            System.out.println("Error on import json file.");
+//        }
 
         post(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
