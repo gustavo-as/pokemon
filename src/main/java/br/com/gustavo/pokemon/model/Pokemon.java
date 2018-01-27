@@ -30,7 +30,7 @@ public class Pokemon {
 
     private Double spawn_chance;
 
-    private Integer avg_spawns;
+    private Double avg_spawns;
 
     private String spawn_time;
 
