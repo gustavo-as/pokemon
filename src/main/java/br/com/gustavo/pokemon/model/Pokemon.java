@@ -13,7 +13,7 @@ public class Pokemon {
 
     private String img;
 
-    private List<Type> type;
+    private List<String> type;
 
     private String height;
 
@@ -25,17 +25,17 @@ public class Pokemon {
 
     private String egg;
 
-    private float spawn_chance;
+    private Double spawn_chance;
 
     private Integer avg_spawns;
 
     private String spawn_time;
 
-    private List<Multiplyer> multiplyers;
+    private List<Double> multiplyers;
 
-    private List<Weakness> weaknesses;
+    private List<String> weaknesses;
 
-    private List<Evolution> next_evolutions;
+    private Map<String, String> next_evolutions;
 
 
 
