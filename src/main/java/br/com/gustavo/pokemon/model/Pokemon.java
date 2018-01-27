@@ -1,8 +1,14 @@
 package br.com.gustavo.pokemon.model;
 
+import lombok.Data;
+
+import java.util.List;
+import java.util.Map;
+
 /**
  * Created by gustavo on 27/01/18.
  */
+@Data
 public class Pokemon {
 
     private Long id;
