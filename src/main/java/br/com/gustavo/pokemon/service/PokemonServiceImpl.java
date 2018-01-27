@@ -4,7 +4,6 @@ import br.com.gustavo.pokemon.exception.BusinessException;
 import br.com.gustavo.pokemon.model.Pokemon;
 import br.com.gustavo.pokemon.repository.PokemonRepository;
 import br.com.gustavo.pokemon.repository.PokemonRepositoryImpl;
-import org.mongodb.morphia.Key;
 
 import java.util.List;
 
@@ -13,7 +12,7 @@ public class PokemonServiceImpl implements PokemonService {
     private PokemonRepository pokemonRepository = new PokemonRepositoryImpl();
 
     @Override
-    public Key<Pokemon> save(Pokemon pokemon) throws Exception {
+    public Pokemon save(Pokemon pokemon) throws Exception {
         try {
             return pokemonRepository.save(pokemon);
         } catch (BusinessException be) {
@@ -31,9 +30,9 @@ public class PokemonServiceImpl implements PokemonService {
     }
 
     @Override
-    public Pokemon update(String numero) throws Exception {
+    public Pokemon update(Pokemon pokemon) throws Exception {
         try {
-            return pokemonRepository.update(numero);
+            return pokemonRepository.update(pokemon);
         } catch (BusinessException be) {
             throw new Exception("Error update Pokemon");
         }

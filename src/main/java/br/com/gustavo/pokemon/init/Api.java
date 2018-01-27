@@ -44,10 +44,10 @@ public class Api {
             return pokemonService.list();
         }, gson ::toJson);
 
-        put(ROUTE_POKEMON+"/:num", (req, res) -> {
+        put(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
-            String par = req.params("num");
-            return pokemonService.update(par);
+            Pokemon pokemon = gson.fromJson(req.body(), Pokemon.class);
+            return pokemonService.update(pokemon);
         }, gson ::toJson);
 
         delete(ROUTE_POKEMON+"/:id", (req, res) -> {
