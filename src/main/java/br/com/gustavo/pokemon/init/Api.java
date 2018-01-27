@@ -31,22 +31,26 @@ public class Api {
         post(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
             Pokemon pokemon = gson.fromJson(req.body(), Pokemon.class);
+            res.status(201);
             return pokemonService.save(pokemon);
         }, gson::toJson);
 
         get(ROUTE_POKEMON+"/:num", (req, res) -> {
             res.type(CONTENT_TYPE);
+            res.status(200);
             return pokemonService.search(req.params("num"));
         }, gson :: toJson);
 
         get(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
+            res.status(200);
             return pokemonService.list();
         }, gson ::toJson);
 
         put(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
             Pokemon pokemon = gson.fromJson(req.body(), Pokemon.class);
+            res.status(200);
             return pokemonService.update(pokemon);
         }, gson ::toJson);
 

@@ -14,7 +14,9 @@ import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -53,7 +55,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     public Pokemon search(String numero){
         FindIterable<Document> cursor = collection.find(new BasicDBObject("num", numero));
-        System.out.println(cursor.toString());
+        Gson gson = new Gson();
         return null;
     }
 
@@ -61,54 +63,47 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     public Pokemon update(Pokemon pokemon) {
         MongoCursor<Document> cursor = collection.find(Filters.eq("num", pokemon.getNum())).iterator();
         try {
-            while (cursor.hasNext()) {
-                Document doc = cursor.next();
 
+            Bson filter = new Document("num", pokemon.getNum());
+            Bson newValue = new Document("name", pokemon.getName())
+                    .append("img", pokemon.getImg())
+                    .append("type", pokemon.getType())
+                    .append("height", pokemon.getHeight())
+                    .append("weight", pokemon.getWeight())
+                    .append("candy", pokemon.getCandy())
+                    .append("candy_count", pokemon.getCandy_count())
+                    .append("egg", pokemon.getEgg())
+                    .append("spawn_change", pokemon.getSpawn_chance())
+                    .append("avg_spawns", pokemon.getAvg_spawns())
+                    .append("spawn_time", pokemon.getSpawn_time())
+                    .append("multiplyers", pokemon.getMultiplyers())
+                    .append("weaknesses", pokemon.getWeaknesses())
+                    .append("next_evolutions", pokemon.getNext_evolutions());
 
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                Gson gson = gsonBuilder.create();
+            Bson updateOperationDocument = new Document("$set", newValue);
 
-                Map<String,Object> mapDoc = (Map)gson.fromJson(doc.toJson(), Map.class);
-                mapDoc.put("name", pokemon.getName());
-                mapDoc.put("img", pokemon.getImg());
-                mapDoc.put("type", pokemon.getType());
-                mapDoc.put("height", pokemon.getHeight());
-                mapDoc.put("weight", pokemon.getWeight());
-                mapDoc.put("candy", pokemon.getCandy());
-                mapDoc.put("candy_count", pokemon.getCandy_count());
-                mapDoc.put("egg", pokemon.getEgg());
-                mapDoc.put("spawn_change", pokemon.getSpawn_chance());
-                mapDoc.put("avg_spawns", pokemon.getAvg_spawns());
-                mapDoc.put("spawn_time", pokemon.getSpawn_time());
-                mapDoc.put("multiplayers", pokemon.getMultiplyers());
-                mapDoc.put("weaknesses", pokemon.getWeaknesses());
-                mapDoc.put("next_evolutions", pokemon.getNext_evolutions());
+            collection.updateOne(filter, updateOperationDocument);
 
-                Document docUp = new Document(mapDoc);
-                collection.updateOne(doc, docUp);
-                // collection.updateOne(doc, new Document("$set", new Document("updated", new Date())));
-
-                // collection.updaparteOne(doc, new Document("updated", new Date()));
-            }
-            list();
-        } finally {
-            cursor.close();
+            return pokemon;
+        } catch (Exception ex) {
+            System.out.println(ex.getMessage());
         }
         return null;
-
     }
 
     @Override
     public List<Pokemon> list() {
         MongoCursor<Document> cursor = collection.find().iterator();
         try {
+            List<Pokemon> pokemons = new ArrayList<Pokemon>();
             while (cursor.hasNext()) {
-                System.out.println(cursor.next().toJson());
+                Gson gson = new Gson();
+                pokemons.add(gson.fromJson(cursor.next().toJson(), Pokemon.class));
             }
+            return pokemons;
         } finally {
             cursor.close();
         }
-        return null;
     }
 
     @Override
