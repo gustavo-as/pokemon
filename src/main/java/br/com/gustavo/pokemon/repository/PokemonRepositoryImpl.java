@@ -55,8 +55,9 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     public Pokemon search(String numero){
         FindIterable<Document> cursor = collection.find(new BasicDBObject("num", numero));
+        Document doc = cursor.first();
         Gson gson = new Gson();
-        return null;
+        return gson.fromJson(doc.toJson(), Pokemon.class);
     }
 
     @Override
