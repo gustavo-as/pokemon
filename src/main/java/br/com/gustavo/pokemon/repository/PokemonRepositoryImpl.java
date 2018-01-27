@@ -28,7 +28,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     public PokemonRepositoryImpl() {
         client = new MongoClient( "localhost" , 27017 );
-        db = client.getDatabase("novaxs");
+        db = client.getDatabase("novobanco");
         collection = db.getCollection("pokemon");
 
     }
@@ -63,6 +63,8 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         try {
             while (cursor.hasNext()) {
                 Document doc = cursor.next();
+
+
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 Gson gson = gsonBuilder.create();
 
