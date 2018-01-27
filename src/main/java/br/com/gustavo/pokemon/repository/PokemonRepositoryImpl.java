@@ -15,12 +15,15 @@ import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import spark.Request;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class PokemonRepositoryImpl implements PokemonRepository {
+
+    private static final int LIMIT = 20;
 
     private MongoClient client;
 
@@ -107,6 +110,10 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         }
     }
 
+    public Long countData() {
+       return collection.count();
+    }
+
     @Override
     public void delete(String numero) {
         collection.deleteOne(Filters.eq("num",numero));
@@ -116,6 +123,23 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     public void importData(String pathFile) {
         CollectionManager.cleanAndFill(client.getDB("database"), pathFile, "pokemon");
 //        datastore.ensureIndexes(Pokemon.class);
+    }
+
+    @Override
+    public List<Pokemon> paginable(Request req) {
+        List<Pokemon> pokemons = new ArrayList<>();
+        MongoCursor<Document> cursor = null;
+        if(countData() < LIMIT){
+            cursor = collection.find().limit(Integer.parseInt(req.params("limit"))).iterator();
+        } else {
+            cursor = collection.find().skip(Integer.parseInt(req.params("page"))).limit(Integer.parseInt(req.params("limit"))).iterator();
+        }
+
+        while (cursor.hasNext()) {
+            Gson gson = new Gson();
+            pokemons.add(gson.fromJson(cursor.next().toJson(), Pokemon.class));
+        }
+        return pokemons;
     }
 
 }

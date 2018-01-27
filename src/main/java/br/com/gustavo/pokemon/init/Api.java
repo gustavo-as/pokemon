@@ -41,6 +41,14 @@ public class Api {
             return pokemonService.search(req.params("num"));
         }, gson :: toJson);
 
+
+        get(ROUTE_POKEMON+"/:page/:limit", (req, res) -> {
+            res.type(CONTENT_TYPE);
+            res.status(200);
+            return pokemonService.paginable(req);
+        }, gson :: toJson);
+
+
         get(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
             res.status(200);

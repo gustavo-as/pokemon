@@ -1,6 +1,7 @@
 package br.com.gustavo.pokemon.generic;
 
 import br.com.gustavo.pokemon.model.Pokemon;
+import spark.Request;
 
 import java.util.List;
 
@@ -17,5 +18,7 @@ public interface GenericInterface{
     void delete(String numero) throws Exception;
 
     void importData(String pathFile) throws Exception;
+
+    List<Pokemon> paginable(Request req) throws Exception;
 
 }

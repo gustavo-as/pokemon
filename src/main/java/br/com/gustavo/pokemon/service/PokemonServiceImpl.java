@@ -4,6 +4,7 @@ import br.com.gustavo.pokemon.exception.BusinessException;
 import br.com.gustavo.pokemon.model.Pokemon;
 import br.com.gustavo.pokemon.repository.PokemonRepository;
 import br.com.gustavo.pokemon.repository.PokemonRepositoryImpl;
+import spark.Request;
 
 import java.util.List;
 
@@ -62,6 +63,15 @@ public class PokemonServiceImpl implements PokemonService {
             pokemonRepository.importData(pathFile);
         } catch (BusinessException be) {
             throw new Exception("Error importing data " + pathFile);
+        }
+    }
+
+    @Override
+    public List<Pokemon> paginable(Request req) throws Exception{
+        try {
+            return pokemonRepository.paginable(req);
+        } catch (BusinessException be) {
+            throw new Exception("Error on list pokemons");
         }
     }
 
