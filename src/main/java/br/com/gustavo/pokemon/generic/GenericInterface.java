@@ -17,8 +17,10 @@ public interface GenericInterface{
 
     void delete(String numero) throws Exception;
 
-    void importData(String pathFile) throws Exception;
+    void importData(String jsonString) throws Exception;
 
     List<Pokemon> paginable(Request req) throws Exception;
+
+    List<Pokemon> searchByType(Request req) throws Exception;
 
 }

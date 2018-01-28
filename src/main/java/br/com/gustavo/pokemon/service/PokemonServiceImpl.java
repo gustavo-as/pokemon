@@ -75,5 +75,14 @@ public class PokemonServiceImpl implements PokemonService {
         }
     }
 
+    @Override
+    public List<Pokemon> searchByType(Request req) throws Exception {
+        try {
+            return pokemonRepository.searchByType(req);
+        } catch (BusinessException be) {
+            throw new Exception("Error on list pokemons by type");
+        }
+    }
+
 
 }

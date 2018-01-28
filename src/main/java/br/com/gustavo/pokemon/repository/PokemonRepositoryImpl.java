@@ -2,7 +2,6 @@ package br.com.gustavo.pokemon.repository;
 
 
 import br.com.gustavo.pokemon.model.Pokemon;
-import br.com.gustavo.pokemon.util.CollectionManager;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -23,7 +22,7 @@ import java.util.Map;
 
 public class PokemonRepositoryImpl implements PokemonRepository {
 
-    private static final int LIMIT = 20;
+    private static int LIMIT = 20;
 
     private MongoClient client;
 
@@ -33,7 +32,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     public PokemonRepositoryImpl() {
         client = new MongoClient( "localhost" , 27017 );
-        db = client.getDatabase("novobanco");
+        db = client.getDatabase("novaxs");
         collection = db.getCollection("pokemon");
 
     }
@@ -120,9 +119,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
-    public void importData(String pathFile) {
-        CollectionManager.cleanAndFill(client.getDB("database"), pathFile, "pokemon");
-//        datastore.ensureIndexes(Pokemon.class);
+    public void importData(String jsonString) {
+        Document doc = Document.parse(jsonString);
+        List<Document> list = new ArrayList<>();
+        list.add(doc);
+
+        collection.insertMany(json);
     }
 
     @Override
@@ -134,6 +136,18 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         } else {
             cursor = collection.find().skip(Integer.parseInt(req.params("page"))).limit(Integer.parseInt(req.params("limit"))).iterator();
         }
+
+        while (cursor.hasNext()) {
+            Gson gson = new Gson();
+            pokemons.add(gson.fromJson(cursor.next().toJson(), Pokemon.class));
+        }
+        return pokemons;
+    }
+
+    @Override
+    public List<Pokemon> searchByType(Request req) {
+        List<Pokemon> pokemons = new ArrayList<>();
+        MongoCursor<Document> cursor = collection.find(Filters.eq("type", req.params("type"))).limit(Integer.parseInt(req.params("limit"))).iterator();
 
         while (cursor.hasNext()) {
             Gson gson = new Gson();

@@ -6,13 +6,16 @@ import br.com.gustavo.pokemon.service.PokemonServiceImpl;
 import br.com.gustavo.pokemon.util.ResponseHttpSpark;
 import br.com.gustavo.pokemon.util.StatusResponse;
 import com.google.gson.Gson;
+import org.apache.commons.io.FileUtils;
+
+import java.io.File;
 
 import static spark.Spark.*;
 
 
 public class Api {
 
-    public static final String PATH_FILE_JSON = "/home/gustavo/Downloads/pokedex.json";
+    public static final String FILE_JSON = "pokedex.json";
 
     public static final String ROUTE_POKEMON = "/pokemon";
     public static final String CONTENT_TYPE = "application/json";
@@ -22,11 +25,18 @@ public class Api {
 
     public static void main(String[] args) {
 
-//        try {
-//            pokemonService.importData(PATH_FILE_JSON);
-//        } catch (Exception e) {
-//            System.out.println("Error on import json file.");
-//        }
+        try {
+            Api api = new Api();
+            ClassLoader classLoader = api.getClass().getClassLoader();
+            File file = new File(classLoader.getResource(FILE_JSON).getFile());
+
+            String jsonString = FileUtils.readFileToString(file, "UTF-8");
+
+            pokemonService.importData(jsonString);
+
+        } catch (Exception e) {
+            System.out.println("Error on import json file.");
+        }
 
         post(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
@@ -48,6 +58,11 @@ public class Api {
             return pokemonService.paginable(req);
         }, gson :: toJson);
 
+        get(ROUTE_POKEMON+"s/:type/:limit", (req, res) -> {
+            res.type(CONTENT_TYPE);
+            res.status(200);
+            return pokemonService.searchByType(req);
+        }, gson :: toJson);
 
         get(ROUTE_POKEMON, (req, res) -> {
             res.type(CONTENT_TYPE);
