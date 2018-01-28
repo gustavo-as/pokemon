@@ -6,7 +6,6 @@ import br.com.gustavo.pokemon.service.PokemonServiceImpl;
 import br.com.gustavo.pokemon.util.ResponseHttpSpark;
 import br.com.gustavo.pokemon.util.StatusResponse;
 import com.google.gson.Gson;
-import org.apache.commons.io.FileUtils;
 
 import java.io.File;
 
@@ -30,9 +29,8 @@ public class Api {
             ClassLoader classLoader = api.getClass().getClassLoader();
             File file = new File(classLoader.getResource(FILE_JSON).getFile());
 
-            String jsonString = FileUtils.readFileToString(file, "UTF-8");
 
-            pokemonService.importData(jsonString);
+            pokemonService.importData(file.getPath());
 
         } catch (Exception e) {
             System.out.println("Error on import json file.");

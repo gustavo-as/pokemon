@@ -120,9 +120,9 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
-    public void importData(String jsonString) throws IOException {
+    public void importData(String filePath) throws IOException {
         Runtime run = Runtime.getRuntime();
-        run.exec("mongoimport --db novaxs --collection pokemon --file pokedex.json");
+        run.exec("mongoimport --db novaxs --collection pokemon --file " + filePath);
     }
 
     @Override
