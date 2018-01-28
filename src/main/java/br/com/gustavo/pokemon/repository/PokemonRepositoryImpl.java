@@ -12,11 +12,11 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
-import com.mongodb.util.JSON;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import spark.Request;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +27,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     private MongoClient client;
 
-    MongoDatabase db;
+    private MongoDatabase db;
 
     private MongoCollection<Document> collection;
 
@@ -120,15 +120,9 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     }
 
     @Override
-    public void importData(String jsonString) {
-        Object doc = JSON.parse(jsonString);
-
-        List<Document> documents = (List<Document>) doc;
-
-        for(Document document : documents){
-            collection.insertOne(document);
-        }
-
+    public void importData(String jsonString) throws IOException {
+        Runtime run = Runtime.getRuntime();
+        run.exec("mongoimport --db novaxs --collection pokemon --file pokedex.json");
     }
 
     @Override
