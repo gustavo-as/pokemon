@@ -12,6 +12,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import com.mongodb.util.JSON;
 import org.bson.Document;
 import org.bson.conversions.Bson;
 import spark.Request;
@@ -120,11 +121,14 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     @Override
     public void importData(String jsonString) {
-        Document doc = Document.parse(jsonString);
-        List<Document> list = new ArrayList<>();
-        list.add(doc);
+        Object doc = JSON.parse(jsonString);
 
-        collection.insertMany(json);
+        List<Document> documents = (List<Document>) doc;
+
+        for(Document document : documents){
+            collection.insertOne(document);
+        }
+
     }
 
     @Override
