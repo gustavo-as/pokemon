@@ -24,6 +24,7 @@ import java.util.Map;
 public class PokemonRepositoryImpl implements PokemonRepository {
 
     private static int LIMIT = 20;
+    private static String DATABASE = "gustavo_pokemon";
 
     private MongoClient client;
 
@@ -33,7 +34,7 @@ public class PokemonRepositoryImpl implements PokemonRepository {
 
     public PokemonRepositoryImpl() {
         client = new MongoClient( "localhost" , 27017 );
-        db = client.getDatabase("novaxs");
+        db = client.getDatabase(DATABASE);
         collection = db.getCollection("pokemon");
 
     }
@@ -59,8 +60,12 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     public Pokemon search(String numero){
         FindIterable<Document> cursor = collection.find(new BasicDBObject("num", numero));
         Document doc = cursor.first();
+        if(doc == null){
+            return null;
+        }
         Gson gson = new Gson();
-        return gson.fromJson(doc.toJson(), Pokemon.class);
+        Pokemon result = gson.fromJson(doc.toJson(), Pokemon.class);
+        return result;
     }
 
     @Override
@@ -82,7 +87,8 @@ public class PokemonRepositoryImpl implements PokemonRepository {
                     .append("spawn_time", pokemon.getSpawn_time())
                     .append("multiplyers", pokemon.getMultiplyers())
                     .append("weaknesses", pokemon.getWeaknesses())
-                    .append("next_evolutions", pokemon.getNext_evolutions());
+                    .append("next_evolution", pokemon.getNext_evolution())
+                    .append("prev_evolution", pokemon.getPrev_evolution());
 
             Bson updateOperationDocument = new Document("$set", newValue);
 
@@ -122,7 +128,8 @@ public class PokemonRepositoryImpl implements PokemonRepository {
     @Override
     public void importData(String filePath) throws IOException {
         Runtime run = Runtime.getRuntime();
-        run.exec("mongoimport --db novaxs --collection pokemon --file " + filePath + " --jsonArray");
+        //run.exec("mongoimport --db novaxs --collection pokemon --file " + filePath + " --jsonArray");        
+        run.exec("mongoimport --db " + DATABASE + " --collection pokemon --file " + filePath + " --jsonArray");
     }
 
     @Override
@@ -132,7 +139,9 @@ public class PokemonRepositoryImpl implements PokemonRepository {
         if(countData() < LIMIT){
             cursor = collection.find().limit(Integer.parseInt(req.params("limit"))).iterator();
         } else {
-            cursor = collection.find().skip(Integer.parseInt(req.params("page"))).limit(Integer.parseInt(req.params("limit"))).iterator();
+            int quantidade = Integer.parseInt(req.params("limit"));
+            int page = quantidade * Integer.parseInt(req.params("page"));
+            cursor = collection.find().skip(page).limit(quantidade).iterator();
         }
 
         while (cursor.hasNext()) {

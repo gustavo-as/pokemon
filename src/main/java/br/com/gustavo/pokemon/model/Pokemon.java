@@ -38,6 +38,8 @@ public class Pokemon {
 
     private List<String> weaknesses;
 
-    private Map<String, String> next_evolutions;
+    private List<Map<String, String>> next_evolution;
+    
+    private List<Map<String, String>> prev_evolution;
 
 }

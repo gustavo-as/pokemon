@@ -22,18 +22,17 @@ public class Api {
     private static Gson gson = new Gson();
     private static PokemonService pokemonService = new PokemonServiceImpl();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws Exception {
 
         try {
             Api api = new Api();
             ClassLoader classLoader = api.getClass().getClassLoader();
             File file = new File(classLoader.getResource(FILE_JSON).getFile());
-
-
             pokemonService.importData(file.getPath());
 
         } catch (Exception e) {
             System.out.println("Error on import json file.");
+            throw e;            
         }
 
         post(ROUTE_POKEMON, (req, res) -> {
@@ -44,9 +43,14 @@ public class Api {
         }, gson::toJson);
 
         get(ROUTE_POKEMON+"/:num", (req, res) -> {
-            res.type(CONTENT_TYPE);
+            res.type(CONTENT_TYPE);            
+            Pokemon pokemon = pokemonService.search(req.params("num"));
+            if(pokemon == null){
+                res.status(404);
+                return null;
+            }
             res.status(200);
-            return pokemonService.search(req.params("num"));
+            return pokemon;
         }, gson :: toJson);
 
 
